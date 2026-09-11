@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Josephus Circle Simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14181c;
+    --surface: #1c2228;
+    --surface-2: #232a31;
+    --line: #333c44;
+    --text: #e9e4d8;
+    --text-dim: #9aa3ab;
+    --brass: #b8863b;
+    --brass-bright: #d4af5a;
+    --ember: #93463f;
+    --ember-bright: #c25a50;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    margin:0;
+  }
+  a{color:var(--brass-bright);}
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:48px 28px 80px;
+  }
+
+  header.hero{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    padding-bottom:36px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:36px;
+  }
+  header.hero h1{
+    font-size:clamp(2.1rem, 4vw, 3rem);
+    color:var(--text);
+    letter-spacing:0.2px;
+  }
+  header.hero p{
+    max-width:62ch;
+    color:var(--text-dim);
+    font-size:1.02rem;
+  }
+  header.hero .byline{
+    color:var(--text-dim);
+    font-size:0.92rem;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr;}
+  }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:24px;
+  }
+
+  .field{
+    margin-bottom:18px;
+  }
+  .field label{
+    display:block;
+    font-size:0.85rem;
+    color:var(--text-dim);
+    margin-bottom:6px;
+  }
+  .field input[type="number"]{
+    width:100%;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:6px;
+    color:var(--text);
+    padding:9px 10px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.98rem;
+  }
+  .field input[type="number"]:focus{
+    outline:2px solid var(--brass);
+    outline-offset:1px;
+    border-color:var(--brass);
+  }
+  .field .hint{
+    font-size:0.78rem;
+    color:var(--text-dim);
+    margin-top:5px;
+  }
+
+  .mode-toggle{
+    display:flex;
+    border:1px solid var(--line);
+    border-radius:7px;
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .mode-toggle button{
+    flex:1;
+    background:var(--bg);
+    color:var(--text-dim);
+    border:none;
+    padding:10px 8px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.85rem;
+    cursor:pointer;
+    transition:background 0.15s, color 0.15s;
+  }
+  .mode-toggle button.active{
+    background:var(--brass);
+    color:#181410;
+    font-weight:600;
+  }
+  .mode-toggle button:not(.active):hover{
+    background:var(--surface-2);
+    color:var(--text);
+  }
+
+  button.run{
+    width:100%;
+    background:var(--brass);
+    color:#181410;
+    border:none;
+    border-radius:7px;
+    padding:12px;
+    font-size:0.98rem;
+    font-weight:600;
+    font-family:'IBM Plex Sans', sans-serif;
+    cursor:pointer;
+    transition:background 0.15s;
+  }
+  button.run:hover{ background:var(--brass-bright); }
+  button.run:focus-visible{ outline:2px solid var(--text); outline-offset:2px; }
+
+  .error{
+    color:var(--ember-bright);
+    font-size:0.85rem;
+    margin-top:10px;
+    min-height:1.2em;
+  }
+
+  .stage{
+    min-height:420px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  .empty-state{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-dim);
+    font-family:'Source Serif 4', serif;
+    font-style:italic;
+    font-size:1.1rem;
+    text-align:center;
+    padding:60px 20px;
+  }
+
+  .viz-row{
+    display:grid;
+    grid-template-columns:1fr 260px;
+    gap:22px;
+  }
+  @media (max-width:720px){
+    .viz-row{grid-template-columns:1fr;}
+  }
+
+  .circle-box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+  }
+  .circle-box svg{ width:100%; height:auto; max-width:440px; }
+
+  .node-label{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:12px;
+    fill:var(--text);
+  }
+
+  .scrub-panel{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .scrub-panel .status{
+    font-family:'Source Serif 4', serif;
+    font-size:1.05rem;
+  }
+  .scrub-panel .status .survivor{ color:var(--brass-bright); font-weight:600; }
+  .scrub-panel .status .eliminated{ color:var(--ember-bright); font-weight:600; }
+
+  .scrub-controls{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .scrub-controls input[type="range"]{ flex:1; accent-color: var(--brass); }
+  .scrub-controls button{
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:6px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-size:0.85rem;
+  }
+  .scrub-controls button:hover{ border-color:var(--brass); }
+
+  .order-list{
+    font-size:0.85rem;
+    color:var(--text-dim);
+    max-height:160px;
+    overflow-y:auto;
+    border-top:1px solid var(--line);
+    padding-top:10px;
+  }
+  .order-list span.step{
+    display:inline-block;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:2px 7px;
+    margin:2px 3px 2px 0;
+  }
+  .order-list span.step.current{
+    border-color:var(--ember);
+    color:var(--ember-bright);
+  }
+
+  table.results{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.92rem;
+  }
+  table.results th{
+    text-align:left;
+    font-weight:600;
+    color:var(--text-dim);
+    border-bottom:1px solid var(--line);
+    padding:8px 10px;
+    position:sticky;
+    top:0;
+    background:var(--surface);
+  }
+  table.results td{
+    padding:7px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  table.results tbody tr{ cursor:pointer; }
+  table.results tbody tr:hover{ background:var(--surface-2); }
+  table.results tbody tr.selected{ background:var(--surface-2); }
+  table.results td.survivor-cell{ color:var(--brass-bright); font-weight:600; }
+
+  .table-scroll{
+    max-height:520px;
+    overflow-y:auto;
+    border:1px solid var(--line);
+    border-radius:10px;
+  }
+
+  .range-detail{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    font-size:0.88rem;
+    color:var(--text-dim);
+  }
+  .range-detail strong{ color:var(--text); }
+
+  footer{
+    margin-top:56px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+    color:var(--text-dim);
+    font-size:0.85rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    * { transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>The Josephus Circle Simulation</h1>
+    <div class="byline">by James Lee</div>
+  </header>
+
+  <div class="layout">
+    <div class="panel controls">
+      <div class="mode-toggle" role="tablist" aria-label="Display mode">
+        <button id="mode-single" class="active" role="tab" aria-selected="true">Single N</button>
+        <button id="mode-range" role="tab" aria-selected="false">Range of N</button>
+      </div>
+
+      <div id="fields-single">
+        <div class="field">
+          <label for="n-single">Group size (n)</label>
+          <input type="number" id="n-single" value="14" min="1" step="1">
+        </div>
+        <div class="field">
+          <label for="d-single">Count every (d)th person</label>
+          <input type="number" id="d-single" value="2" min="1" step="1">
+          <div class="hint">Counting starts at person 0.</div>
+        </div>
+      </div>
+
+      <div id="fields-range" style="display:none;">
+        <div class="field">
+          <label for="n-range">Show n from 2 up to</label>
+          <input type="number" id="n-range" value="60" min="2" step="1">
+        </div>
+        <div class="field">
+          <label for="d-range">Count every (d)th person</label>
+          <input type="number" id="d-range" value="2" min="1" step="1">
+        </div>
+      </div>
+
+      <button class="run" id="run-btn">Run simulation</button>
+      <div class="error" id="error-msg"></div>
+    </div>
+
+    <div class="panel stage" id="stage">
+      <div class="empty-state" id="empty-state">Set your numbers and run the simulation to see who's left standing.</div>
+    </div>
+  </div>
+
+  <footer>
+    Based on the classic Josephus problem. Elimination follows: starting from person 0, count off d people and remove the d-th; repeat around the remaining circle until one person is left.
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function josephus(n, d){
+    var people = [];
+    for (var i=0;i<n;i++) people.push(i);
+    var eliminationOrder = [];
+    var currentIndex = 0;
+    while (people.length > 1){
+      currentIndex = (currentIndex + d - 1) % people.length;
+      var eliminated = people.splice(currentIndex, 1)[0];
+      eliminationOrder.push(eliminated);
+    }
+    return { order: eliminationOrder, survivor: people[0] };
+  }
+
+  var modeSingleBtn = document.getElementById('mode-single');
+  var modeRangeBtn = document.getElementById('mode-range');
+  var fieldsSingle = document.getElementById('fields-single');
+  var fieldsRange = document.getElementById('fields-range');
+  var runBtn = document.getElementById('run-btn');
+  var errorMsg = document.getElementById('error-msg');
+  var stage = document.getElementById('stage');
+
+  var mode = 'single';
+
+  modeSingleBtn.addEventListener('click', function(){
+    mode = 'single';
+    modeSingleBtn.classList.add('active');
+    modeRangeBtn.classList.remove('active');
+    modeSingleBtn.setAttribute('aria-selected','true');
+    modeRangeBtn.setAttribute('aria-selected','false');
+    fieldsSingle.style.display = '';
+    fieldsRange.style.display = 'none';
+    resetStage();
+  });
+
+  modeRangeBtn.addEventListener('click', function(){
+    mode = 'range';
+    modeRangeBtn.classList.add('active');
+    modeSingleBtn.classList.remove('active');
+    modeRangeBtn.setAttribute('aria-selected','true');
+    modeSingleBtn.setAttribute('aria-selected','false');
+    fieldsRange.style.display = '';
+    fieldsSingle.style.display = 'none';
+    resetStage();
+  });
+
+  function resetStage(){
+    stage.innerHTML = '<div class="empty-state" id="empty-state">Set your numbers and run the simulation to see who\'s left standing.</div>';
+    errorMsg.textContent = '';
+  }
+
+  function validate(n, d, maxAllowed){
+    if (!Number.isInteger(n) || !Number.isInteger(d)) return 'n and d must be whole numbers.';
+    if (n < 1) return 'Group size must be at least 1.';
+    if (d < 1) return 'd must be at least 1.';
+    if (maxAllowed && n > maxAllowed) return 'That group size is too large to draw ( max ' + maxAllowed + ' for the circle view ).';
+    return null;
+  }
+
+  runBtn.addEventListener('click', function(){
+    errorMsg.textContent = '';
+    if (mode === 'single'){
+      runSingle();
+    } else {
+      runRange();
+    }
+  });
+
+  // ---------- SINGLE MODE ----------
+  function runSingle(){
+    var n = parseInt(document.getElementById('n-single').value, 10);
+    var d = parseInt(document.getElementById('d-single').value, 10);
+    var err = validate(n, d, 400);
+    if (err){ errorMsg.textContent = err; return; }
+
+    var result = (n === 1) ? { order: [], survivor: 0 } : josephus(n, d);
+    renderSingle(n, d, result);
+  }
+
+  function renderSingle(n, d, result){
+    var order = result.order;
+    var survivor = result.survivor;
+
+    stage.innerHTML =
+      '<div class="viz-row">' +
+        '<div class="circle-box"><svg id="circle-svg" viewBox="0 0 440 440"></svg></div>' +
+        '<div class="scrub-panel">' +
+          '<div class="status" id="status-line"></div>' +
+          '<div class="scrub-controls">' +
+            '<button id="step-back" aria-label="Step back">&larr;</button>' +
+            '<input type="range" id="scrub" min="0" max="' + order.length + '" value="' + order.length + '">' +
+            '<button id="step-fwd" aria-label="Step forward">&rarr;</button>' +
+          '</div>' +
+          '<div class="order-list" id="order-list-box"></div>' +
+        '</div>' +
+      '</div>';
+
+    var svg = document.getElementById('circle-svg');
+    var scrub = document.getElementById('scrub');
+    var statusLine = document.getElementById('status-line');
+    var orderBox = document.getElementById('order-list-box');
+    var stepBack = document.getElementById('step-back');
+    var stepFwd = document.getElementById('step-fwd');
+
+    var cx = 220, cy = 220, r = 165;
+    var positions = [];
+    for (var i=0;i<n;i++){
+      var angle = (2*Math.PI*i/n) - Math.PI/2;
+      positions.push({ x: cx + r*Math.cos(angle), y: cy + r*Math.sin(angle) });
+    }
+
+    function draw(step){
+      var eliminatedSet = {};
+      for (var i=0;i<step;i++) eliminatedSet[order[i]] = true;
+
+      var parts = [];
+      for (var p=0;p<n;p++){
+        var pos = positions[p];
+        var isSurvivorNow = (step === order.length && p === survivor);
+        var isOut = eliminatedSet[p];
+        var fill = isOut ? '#93463f' : (isSurvivorNow ? '#d4af5a' : '#2a3138');
+        var stroke = isOut ? '#c25a50' : (isSurvivorNow ? '#d4af5a' : '#556069');
+        var textFill = isOut ? '#e9e4d8' : (isSurvivorNow ? '#181410' : '#e9e4d8');
+        var radius = n > 60 ? 8 : (n > 30 ? 11 : 15);
+        parts.push('<circle cx="'+pos.x+'" cy="'+pos.y+'" r="'+radius+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.5" opacity="'+(isOut?0.55:1)+'"></circle>');
+        if (n <= 60){
+          parts.push('<text class="node-label" x="'+pos.x+'" y="'+(pos.y+4)+'" text-anchor="middle" fill="'+textFill+'" font-size="'+(n>30?9:11)+'">'+p+'</text>');
+        }
+      }
+      svg.innerHTML = parts.join('');
+
+      if (step === 0){
+        statusLine.innerHTML = 'No one eliminated yet.';
+      } else if (step < order.length){
+        statusLine.innerHTML = 'Person <span class="eliminated">'+order[step-1]+'</span> is out ( step '+step+' of '+order.length+' ).';
+      } else {
+        statusLine.innerHTML = 'Survivor: <span class="survivor">Person '+survivor+'</span>';
+      }
+
+      var listParts = [];
+      for (var s=0;s<order.length;s++){
+        listParts.push('<span class="step'+(s===step-1?' current':'')+'">'+(s+1)+'. '+order[s]+'</span>');
+      }
+      orderBox.innerHTML = order.length ? listParts.join(' ') : '<em>Only one person &mdash; no eliminations needed.</em>';
+
+      scrub.value = step;
+    }
+
+    scrub.addEventListener('input', function(){ draw(parseInt(scrub.value,10)); });
+    stepBack.addEventListener('click', function(){ scrub.value = Math.max(0, parseInt(scrub.value,10)-1); draw(parseInt(scrub.value,10)); });
+    stepFwd.addEventListener('click', function(){ scrub.value = Math.min(order.length, parseInt(scrub.value,10)+1); draw(parseInt(scrub.value,10)); });
+
+    draw(order.length);
+  }
+
+  // ---------- RANGE MODE ----------
+  function runRange(){
+    var maxN = parseInt(document.getElementById('n-range').value, 10);
+    var d = parseInt(document.getElementById('d-range').value, 10);
+    var err = validate(maxN, d, 5000);
+    if (err){ errorMsg.textContent = err; return; }
+    if (maxN < 2){ errorMsg.textContent = 'Choose an upper n of at least 2.'; return; }
+
+    var rows = [];
+    for (var n=2; n<=maxN; n++){
+      var res = josephus(n, d);
+      rows.push({ n: n, survivor: res.survivor, order: res.order });
+    }
+    renderRange(rows, d);
+  }
+
+  function renderRange(rows, d){
+    var tableRows = rows.map(function(r, idx){
+      return '<tr data-idx="'+idx+'"><td>'+r.n+'</td><td class="survivor-cell">'+r.survivor+'</td></tr>';
+    }).join('');
+
+    stage.innerHTML =
+      '<div class="table-scroll"><table class="results">' +
+        '<thead><tr><th>n</th><th>Survivor</th></tr></thead>' +
+        '<tbody id="range-tbody">' + tableRows + '</tbody>' +
+      '</table></div>' +
+      '<div class="range-detail" id="range-detail">Click any row to see that group\'s full elimination order.</div>';
+
+    var tbody = document.getElementById('range-tbody');
+    var detail = document.getElementById('range-detail');
+
+    tbody.addEventListener('click', function(e){
+      var tr = e.target.closest('tr');
+      if (!tr) return;
+      var idx = parseInt(tr.getAttribute('data-idx'), 10);
+      var r = rows[idx];
+
+      var prevSelected = tbody.querySelector('tr.selected');
+      if (prevSelected) prevSelected.classList.remove('selected');
+      tr.classList.add('selected');
+
+      detail.innerHTML = '<strong>n = ' + r.n + ', d = ' + d + '</strong><br>' +
+        'Elimination order: ' + (r.order.length ? r.order.join(', ') : '(none)') + '<br>' +
+        'Survivor: <strong>' + r.survivor + '</strong>';
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
