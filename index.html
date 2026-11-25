@@ -9,14 +9,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #14181c;
-    --surface: #1c2228;
-    --surface-2: #232a31;
-    --line: #333c44;
-    --text: #e9e4d8;
-    --text-dim: #9aa3ab;
-    --brass: #b8863b;
-    --brass-bright: #d4af5a;
+    --bg: #11171e;
+    --surface: #18202a;
+    --surface-2: #1f2935;
+    --line: #2f3d4d;
+    --text: #e6edf5;
+    --text-dim: #9aa8b8;
+    --accent: #4a9be0;
+    --accent-bright: #7bbcf5;
     --ember: #93463f;
     --ember-bright: #c25a50;
   }
@@ -34,7 +34,7 @@
     font-weight:600;
     margin:0;
   }
-  a{color:var(--brass-bright);}
+  a{color:var(--accent-bright);}
 
   .wrap{
     max-width:1180px;
@@ -102,9 +102,9 @@
     font-size:0.98rem;
   }
   .field input[type="number"]:focus{
-    outline:2px solid var(--brass);
+    outline:2px solid var(--accent);
     outline-offset:1px;
-    border-color:var(--brass);
+    border-color:var(--accent);
   }
   .field .hint{
     font-size:0.78rem;
@@ -131,8 +131,8 @@
     transition:background 0.15s, color 0.15s;
   }
   .mode-toggle button.active{
-    background:var(--brass);
-    color:#181410;
+    background:var(--accent);
+    color:#0a1420;
     font-weight:600;
   }
   .mode-toggle button:not(.active):hover{
@@ -142,8 +142,8 @@
 
   button.run{
     width:100%;
-    background:var(--brass);
-    color:#181410;
+    background:var(--accent);
+    color:#0a1420;
     border:none;
     border-radius:7px;
     padding:12px;
@@ -153,7 +153,7 @@
     cursor:pointer;
     transition:background 0.15s;
   }
-  button.run:hover{ background:var(--brass-bright); }
+  button.run:hover{ background:var(--accent-bright); }
   button.run:focus-visible{ outline:2px solid var(--text); outline-offset:2px; }
 
   .error{
@@ -222,7 +222,7 @@
     font-family:'Source Serif 4', serif;
     font-size:1.05rem;
   }
-  .scrub-panel .status .survivor{ color:var(--brass-bright); font-weight:600; }
+  .scrub-panel .status .survivor{ color:var(--accent-bright); font-weight:600; }
   .scrub-panel .status .eliminated{ color:var(--ember-bright); font-weight:600; }
 
   .scrub-controls{
@@ -230,7 +230,7 @@
     align-items:center;
     gap:10px;
   }
-  .scrub-controls input[type="range"]{ flex:1; accent-color: var(--brass); }
+  .scrub-controls input[type="range"]{ flex:1; accent-color: var(--accent); }
   .scrub-controls button{
     background:var(--bg);
     border:1px solid var(--line);
@@ -240,7 +240,31 @@
     cursor:pointer;
     font-size:0.85rem;
   }
-  .scrub-controls button:hover{ border-color:var(--brass); }
+  .scrub-controls button:hover{ border-color:var(--accent); }
+  .scrub-controls button.play{
+    background:var(--accent);
+    color:#0a1420;
+    border-color:var(--accent);
+    font-weight:600;
+    min-width:84px;
+  }
+  .scrub-controls button.play:hover{ background:var(--accent-bright); border-color:var(--accent-bright); }
+  .scrub-controls button:focus-visible{ outline:2px solid var(--text); outline-offset:2px; }
+  .play-row{ display:flex; align-items:center; gap:10px; }
+  .play-row .speed{
+    margin-left:auto;
+    display:flex; align-items:center; gap:6px;
+    font-size:0.8rem; color:var(--text-dim);
+  }
+  .play-row select{
+    background:var(--bg);
+    color:var(--text);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:5px 6px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:0.8rem;
+  }
 
   .order-list{
     font-size:0.85rem;
@@ -285,7 +309,7 @@
   table.results tbody tr{ cursor:pointer; }
   table.results tbody tr:hover{ background:var(--surface-2); }
   table.results tbody tr.selected{ background:var(--surface-2); }
-  table.results td.survivor-cell{ color:var(--brass-bright); font-weight:600; }
+  table.results td.survivor-cell{ color:var(--accent-bright); font-weight:600; }
 
   .table-scroll{
     max-height:520px;
@@ -304,12 +328,43 @@
   }
   .range-detail strong{ color:var(--text); }
 
-  footer{
-    margin-top:56px;
-    padding-top:22px;
-    border-top:1px solid var(--line);
+  .about{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+    margin-bottom:36px;
+  }
+  @media (max-width:980px){
+    .about{grid-template-columns:1fr;}
+  }
+  .about .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-top:3px solid var(--accent);
+    border-radius:10px;
+    padding:22px 24px;
+  }
+  .about h2{
+    font-size:1.2rem;
+    color:var(--accent-bright);
+    margin-bottom:10px;
+  }
+  .about p, .about li{
+    font-size:0.92rem;
     color:var(--text-dim);
-    font-size:0.85rem;
+    margin:0 0 10px;
+  }
+  .about p:last-child{ margin-bottom:0; }
+  .about strong{ color:var(--text); font-weight:600; }
+  .about ol, .about ul{ margin:0; padding-left:20px; }
+  .about li{ margin-bottom:7px; }
+  .about code{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1px 5px;
+    font-size:0.85em;
+    color:var(--text);
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -324,6 +379,29 @@
     <h1>The Josephus Circle Simulation</h1>
     <div class="byline">by James Lee</div>
   </header>
+
+  <section class="about" aria-label="About the Josephus problem">
+    <div class="card">
+      <h2>A short history</h2>
+      <p>The puzzle is named after <strong>Flavius Josephus</strong>, a first-century Jewish historian and military commander. In his account of the siege of Yodfat (67 CE), he describes being trapped in a cave with a band of fellow soldiers, who decided to die rather than be captured. They agreed to draw lots and eliminate one another in turn. Josephus and one other man were the last two left, and they chose to surrender instead.</p>
+    </div>
+
+    <div class="card">
+      <h2>Single N vs. Range of N</h2>
+      <p><strong>Single N</strong> simulates one circle of <code>n</code> people, where every <code>d</code>-th person is eliminated. You can step through each elimination and see who survives.</p>
+      <p><strong>Range of N</strong> runs the same game for every group size from 2 up to your chosen maximum and lists the winning position for each. Click a row to see that group's full elimination order.</p>
+    </div>
+
+    <div class="card">
+      <h2>How to play</h2>
+      <ol>
+        <li>Gather <code>n</code> people in a circle and number them <code>0</code> to <code>n-1</code>.</li>
+        <li>Pick a step size <code>d</code>. Person 0 says &ldquo;1&rdquo;, the next says &ldquo;2&rdquo;, and so on.</li>
+        <li>Whoever says <code>d</code> steps out. Counting restarts at the next person still standing.</li>
+        <li>Keep going until one person is left. That person wins.</li>
+      </ol>
+    </div>
+  </section>
 
   <div class="layout">
     <div class="panel controls">
@@ -340,7 +418,7 @@
         <div class="field">
           <label for="d-single">Count every (d)th person</label>
           <input type="number" id="d-single" value="2" min="1" step="1">
-          <div class="hint">Counting starts at person 0.</div>
+          <div class="hint">Person 0 says &ldquo;1&rdquo;, so with d = 2, person 1 is the first one out.</div>
         </div>
       </div>
 
@@ -352,6 +430,7 @@
         <div class="field">
           <label for="d-range">Count every (d)th person</label>
           <input type="number" id="d-range" value="2" min="1" step="1">
+          <div class="hint">Max 5000. Click a row in the results to see its elimination order.</div>
         </div>
       </div>
 
@@ -364,9 +443,6 @@
     </div>
   </div>
 
-  <footer>
-    Based on the classic Josephus problem. Elimination follows: starting from person 0, count off d people and remove the d-th; repeat around the remaining circle until one person is left.
-  </footer>
 </div>
 
 <script>
@@ -384,6 +460,90 @@
       eliminationOrder.push(eliminated);
     }
     return { order: eliminationOrder, survivor: people[0] };
+  }
+
+  // ---------- STICK FIGURES ----------
+  function f(v){ return v.toFixed(1); }
+  function rnd(p,i){ var v = Math.sin(p*12.9898 + i*78.233) * 43758.5453; return v - Math.floor(v); }
+  function jit(p,i,amt){ return (rnd(p,i) - 0.5) * 2 * amt; }
+
+  // a slightly wobbly "hand-drawn" line
+  function ln(x1,y1,x2,y2,p,i){
+    var mx = (x1+x2)/2 + jit(p,i,1.6), my = (y1+y2)/2 + jit(p,i+1,1.6);
+    return '<path d="M'+f(x1)+' '+f(y1)+' Q'+f(mx)+' '+f(my)+' '+f(x2)+' '+f(y2)+'"/>';
+  }
+
+  function stickFigure(p, x, y, k, state){
+    var col = state === 'out' ? '#c25a50' : (state === 'win' ? '#7bbcf5' : '#e6edf5');
+    var sw = Math.max(1.4, 2*k) / k;
+    var g = [];
+
+    // body + legs
+    g.push(ln(0,-8, 0,8, p,1));
+    if (state === 'win'){
+      g.push(ln(0,8, -9,17, p,2));   // victory jump: legs kicked out
+      g.push(ln(0,8, 9,17, p,3));
+    } else {
+      g.push(ln(0,8, -6,19, p,2));
+      g.push(ln(0,8, 6,19, p,3));
+    }
+
+    // arms
+    if (state === 'win'){
+      g.push(ln(0,-4, -9,-15, p,4));
+      g.push(ln(0,-4, 9,-15, p,5));
+    } else if (state === 'out'){
+      g.push(ln(0,-4, -10,-9, p,4));  // flailing
+      g.push(ln(0,-4, 9,6, p,5));
+    } else {
+      g.push(ln(0,-4, -9,3+jit(p,6,2), p,4));
+      if (rnd(p,8) < 0.3) g.push(ln(0,-4, 9,-12, p,5));   // the one who waves
+      else g.push(ln(0,-4, 9,3+jit(p,7,2), p,5));
+    }
+
+    // head
+    g.push('<circle cx="0" cy="-14" r="6" fill="#1f2935"/>');
+
+    // face
+    if (state === 'out'){
+      g.push('<path d="M-3.4 -16.2 L-1 -13.8 M-1 -16.2 L-3.4 -13.8 M1 -16.2 L3.4 -13.8 M3.4 -16.2 L1 -13.8" stroke-width="'+f(sw*0.6)+'"/>');
+      g.push('<path d="M-2.5 -10.8 Q0 -11.8 2.5 -10.8" stroke-width="'+f(sw*0.6)+'"/>');
+      g.push('<ellipse cx="0.9" cy="-9.4" rx="1" ry="1.7" fill="#e08a84" stroke="none"/>');   // tongue out
+      g.push('<ellipse cx="0" cy="-23.5" rx="5" ry="1.7" stroke="#7bbcf5" stroke-width="'+f(sw*0.7)+'"/>');   // halo
+    } else {
+      g.push('<circle cx="-2.2" cy="-15" r="0.95" fill="'+col+'" stroke="none"/>');
+      g.push('<circle cx="2.2" cy="-15" r="0.95" fill="'+col+'" stroke="none"/>');
+      var m = Math.floor(rnd(p,7) * 3);
+      if (state === 'win') g.push('<path d="M-3.4 -12.2 Q0 -7.8 3.4 -12.2" stroke-width="'+f(sw*0.6)+'"/>');
+      else if (m === 0) g.push('<path d="M-2.6 -11.6 Q0 -9 2.6 -11.6" stroke-width="'+f(sw*0.6)+'"/>');
+      else if (m === 1) g.push('<path d="M-2 -10.8 L2 -10.8" stroke-width="'+f(sw*0.6)+'"/>');
+      else g.push('<circle cx="0" cy="-10.8" r="1.4" stroke-width="'+f(sw*0.6)+'"/>');
+    }
+
+    // extras
+    if (state === 'win'){
+      g.push('<polygon points="-4.6,-19.4 -4.6,-26 -2.3,-22.3 0,-27.5 2.3,-22.3 4.6,-26 4.6,-19.4" fill="#7bbcf5" stroke="#2f6aa3" stroke-width="'+f(sw*0.6)+'"/>');
+      g.push('<path d="M-15 -27 v5 M-17.5 -24.5 h5 M15 -27 v5 M12.5 -24.5 h5" stroke-width="'+f(sw*0.6)+'"/>');   // sparkles
+    } else if (state === 'alive'){
+      var h = rnd(p,9);
+      if (h < 0.22){
+        g.push('<path d="M-4 -19.4 L0 -28 L4 -19.4 Z" fill="#3b82c4" stroke-width="'+f(sw*0.6)+'"/>');   // party hat
+        g.push('<circle cx="0" cy="-28.6" r="1.3" fill="#e6edf5" stroke="none"/>');
+      } else if (h < 0.42){
+        g.push('<path d="M-1.5 -20 Q-4 -24 -5 -22.5 M0 -20.2 L0 -25 M1.5 -20 Q4 -24 5 -22.5" stroke-width="'+f(sw*0.6)+'"/>');   // wild hair
+      }
+      if (rnd(p,10) < 0.35){
+        g.push('<path d="M8.6 -20 Q7 -17.2 8.6 -16.2 Q10.2 -17.2 8.6 -20 Z" fill="#8fd0ff" stroke="none"/>');   // nervous sweat drop
+      }
+    }
+
+    var tr = 'translate('+f(x)+','+f(y)+')';
+    var sc = k;
+    if (state === 'win'){ sc = k*1.25; tr += ' translate(0,'+f(-4*k)+')'; }
+    if (state === 'out'){ tr += ' translate(0,'+f(9*k)+') rotate('+(p%2 ? 82 : -82)+')'; }
+    tr += ' scale('+f(sc)+')';
+
+    return '<g transform="'+tr+'" fill="none" stroke="'+col+'" stroke-width="'+f(sw)+'" stroke-linecap="round" stroke-linejoin="round"'+(state === 'out' ? ' opacity="0.85"' : '')+'>'+g.join('')+'</g>';
   }
 
   var modeSingleBtn = document.getElementById('mode-single');
@@ -418,7 +578,13 @@
     resetStage();
   });
 
+  var playTimer = null;
+  function stopPlayback(){
+    if (playTimer){ clearInterval(playTimer); playTimer = null; }
+  }
+
   function resetStage(){
+    stopPlayback();
     stage.innerHTML = '<div class="empty-state" id="empty-state">Set your numbers and run the simulation to see who\'s left standing.</div>';
     errorMsg.textContent = '';
   }
@@ -452,6 +618,7 @@
   }
 
   function renderSingle(n, d, result){
+    stopPlayback();
     var order = result.order;
     var survivor = result.survivor;
 
@@ -460,6 +627,16 @@
         '<div class="circle-box"><svg id="circle-svg" viewBox="0 0 440 440"></svg></div>' +
         '<div class="scrub-panel">' +
           '<div class="status" id="status-line"></div>' +
+          '<div class="scrub-controls play-row">' +
+            '<button id="play-btn" class="play"' + (order.length ? '' : ' disabled') + '>&#9654; Play</button>' +
+            '<label class="speed">Speed ' +
+              '<select id="speed" aria-label="Playback speed">' +
+                '<option value="1600">Slow</option>' +
+                '<option value="900" selected>Medium</option>' +
+                '<option value="400">Fast</option>' +
+              '</select>' +
+            '</label>' +
+          '</div>' +
           '<div class="scrub-controls">' +
             '<button id="step-back" aria-label="Step back">&larr;</button>' +
             '<input type="range" id="scrub" min="0" max="' + order.length + '" value="' + order.length + '">' +
@@ -475,8 +652,10 @@
     var orderBox = document.getElementById('order-list-box');
     var stepBack = document.getElementById('step-back');
     var stepFwd = document.getElementById('step-fwd');
+    var playBtn = document.getElementById('play-btn');
+    var speedSel = document.getElementById('speed');
 
-    var cx = 220, cy = 220, r = 165;
+    var cx = 220, cy = 220, r = (n <= 40 ? 150 : 165);
     var positions = [];
     for (var i=0;i<n;i++){
       var angle = (2*Math.PI*i/n) - Math.PI/2;
@@ -488,19 +667,27 @@
       for (var i=0;i<step;i++) eliminatedSet[order[i]] = true;
 
       var parts = [];
+      var figures = (n <= 40);
+      var k = Math.max(0.4, Math.min(1.2, (2*Math.PI*r/n) / 38));
       for (var p=0;p<n;p++){
         var pos = positions[p];
-        var isSurvivorNow = (step === order.length && p === survivor);
         var isOut = eliminatedSet[p];
-        var fill = isOut ? '#93463f' : (isSurvivorNow ? '#d4af5a' : '#2a3138');
-        var stroke = isOut ? '#c25a50' : (isSurvivorNow ? '#d4af5a' : '#556069');
-        var textFill = isOut ? '#e9e4d8' : (isSurvivorNow ? '#181410' : '#e9e4d8');
-        var radius = n > 60 ? 8 : (n > 30 ? 11 : 15);
-        parts.push('<circle cx="'+pos.x+'" cy="'+pos.y+'" r="'+radius+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.5" opacity="'+(isOut?0.55:1)+'"></circle>');
-        if (n <= 60){
-          parts.push('<text class="node-label" x="'+pos.x+'" y="'+(pos.y+4)+'" text-anchor="middle" fill="'+textFill+'" font-size="'+(n>30?9:11)+'">'+p+'</text>');
+        var isSurvivorNow = (step === order.length && p === survivor);
+
+        if (figures){
+          parts.push(stickFigure(p, pos.x, pos.y, k, isOut ? 'out' : (isSurvivorNow ? 'win' : 'alive')));
+          if (n <= 30){
+            var lblFill = isOut ? '#c25a50' : (isSurvivorNow ? '#7bbcf5' : '#9aa8b8');
+            parts.push('<text class="node-label" x="'+pos.x.toFixed(1)+'" y="'+(pos.y + 25*k + 10).toFixed(1)+'" text-anchor="middle" fill="'+lblFill+'" font-size="'+(n>25?9:11)+'">'+p+'</text>');
+          }
+        } else {
+          var fill = isOut ? '#93463f' : (isSurvivorNow ? '#7bbcf5' : '#263344');
+          var stroke = isOut ? '#c25a50' : (isSurvivorNow ? '#7bbcf5' : '#52667d');
+          var radius = n > 100 ? 4 : 8;
+          parts.push('<circle cx="'+pos.x+'" cy="'+pos.y+'" r="'+radius+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="1.5" opacity="'+(isOut?0.55:1)+'"></circle>');
         }
       }
+
       svg.innerHTML = parts.join('');
 
       if (step === 0){
@@ -520,11 +707,46 @@
       scrub.value = step;
     }
 
-    scrub.addEventListener('input', function(){ draw(parseInt(scrub.value,10)); });
-    stepBack.addEventListener('click', function(){ scrub.value = Math.max(0, parseInt(scrub.value,10)-1); draw(parseInt(scrub.value,10)); });
-    stepFwd.addEventListener('click', function(){ scrub.value = Math.min(order.length, parseInt(scrub.value,10)+1); draw(parseInt(scrub.value,10)); });
+    function setPlayLabel(){
+      if (playTimer) playBtn.innerHTML = '&#10074;&#10074; Pause';
+      else if (order.length && parseInt(scrub.value,10) >= order.length) playBtn.innerHTML = '&#8635; Replay';
+      else playBtn.innerHTML = '&#9654; Play';
+    }
+
+    function tick(){
+      var cur = parseInt(scrub.value,10);
+      if (cur >= order.length){ stopPlayback(); setPlayLabel(); return; }
+      draw(cur + 1);
+      if (cur + 1 >= order.length){ stopPlayback(); }
+      setPlayLabel();
+    }
+
+    function startPlayback(){
+      stopPlayback();
+      if (parseInt(scrub.value,10) >= order.length) draw(0);   // replay from the beginning
+      playTimer = setInterval(tick, parseInt(speedSel.value,10));
+      setPlayLabel();
+    }
+
+    function manual(step){
+      stopPlayback();
+      draw(step);
+      setPlayLabel();
+    }
+
+    playBtn.addEventListener('click', function(){
+      if (playTimer){ stopPlayback(); setPlayLabel(); }
+      else startPlayback();
+    });
+    speedSel.addEventListener('change', function(){
+      if (playTimer){ stopPlayback(); playTimer = setInterval(tick, parseInt(speedSel.value,10)); }
+    });
+    scrub.addEventListener('input', function(){ manual(parseInt(scrub.value,10)); });
+    stepBack.addEventListener('click', function(){ manual(Math.max(0, parseInt(scrub.value,10)-1)); });
+    stepFwd.addEventListener('click', function(){ manual(Math.min(order.length, parseInt(scrub.value,10)+1)); });
 
     draw(order.length);
+    setPlayLabel();
   }
 
   // ---------- RANGE MODE ----------
@@ -535,10 +757,13 @@
     if (err){ errorMsg.textContent = err; return; }
     if (maxN < 2){ errorMsg.textContent = 'Choose an upper n of at least 2.'; return; }
 
+    // Survivors via the Josephus recurrence J(n) = (J(n-1) + d) mod n  (linear time).
+    // Full elimination orders are only computed when a row is clicked.
     var rows = [];
+    var surv = 0;
     for (var n=2; n<=maxN; n++){
-      var res = josephus(n, d);
-      rows.push({ n: n, survivor: res.survivor, order: res.order });
+      surv = (surv + d) % n;
+      rows.push({ n: n, survivor: surv });
     }
     renderRange(rows, d);
   }
@@ -563,13 +788,14 @@
       if (!tr) return;
       var idx = parseInt(tr.getAttribute('data-idx'), 10);
       var r = rows[idx];
+      var order = josephus(r.n, d).order;
 
       var prevSelected = tbody.querySelector('tr.selected');
       if (prevSelected) prevSelected.classList.remove('selected');
       tr.classList.add('selected');
 
       detail.innerHTML = '<strong>n = ' + r.n + ', d = ' + d + '</strong><br>' +
-        'Elimination order: ' + (r.order.length ? r.order.join(', ') : '(none)') + '<br>' +
+        'Elimination order: ' + (order.length ? order.join(', ') : '(none)') + '<br>' +
         'Survivor: <strong>' + r.survivor + '</strong>';
     });
   }
